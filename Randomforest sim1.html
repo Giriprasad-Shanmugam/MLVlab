@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Decision Tree Visualization - Wine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    img {
+      max-width: 90%;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+    input[type="range"] {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Random Forest Visualization - Wine Dataset</h1>
+  <label for="depthSlider">Select Tree Depth:</label>
+  <input type="range" id="depthSlider" min="1" max="5" step="1" value="1" />
+  <p>Current Depth: <span id="depthValue">5</span></p>
+
+  <!-- ✅ Default image -->
+  <img id="treeImage" src="decision_tree_wine_5.svg" alt="Decision Tree" />
+
+  <script>
+    const depthMap = {
+      "1": { depth: "5", src: "decision_tree_wine_5.svg" },
+      "2": { depth: "10", src: "decision_tree_wine_10.svg" },
+      "3": { depth: "25", src: "decision_tree_wine_25.svg" },
+      "4": { depth: "50", src: "decision_tree_wine_50.svg" },
+      "5": { depth: "100", src: "decision_tree_wine_100.svg" }
+    };
+
+    const slider = document.getElementById('depthSlider');
+    const image = document.getElementById('treeImage');
+    const depthText = document.getElementById('depthValue');
+
+    slider.addEventListener('input', function () {
+      const setting = depthMap[this.value];
+      if (setting) {
+        depthText.textContent = setting.depth;
+        image.src = setting.src;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Diabetes Risk Predictor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #dceffc;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .sliders {
+      flex: 3;
+    }
+
+    .slider-group {
+      margin-bottom: 20px;
+    }
+
+    .slider-group label {
+      font-weight: bold;
+      color: #004080;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .slider-group input[type="range"] {
+      width: 70%;
+    }
+
+    .output {
+      display: inline-block;
+      width: 50px;
+      text-align: center;
+      background: white;
+      border: 1px solid #aaa;
+    }
+
+    .result-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bar-container {
+      width: 80px;
+      height: 400px;
+      border: 4px solid #cce;
+      position: relative;
+      background: #f0f0f0;
+    }
+
+    .bar-fill {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: red;
+      text-align: center;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center; color:#003366;">Diabetes Risk Predictor (Simulated)</h2>
+  <div class="container">
+    <div class="sliders" id="sliders"></div>
+    <div class="result-bar">
+      <div class="bar-container">
+        <div class="bar-fill" id="barFill" style="height: 0%">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simulated logistic regression weights (normalized input)
+    const weights = {
+      sex: 2.0,
+      bp: 3.0,
+      bmi: 4.0,
+      s1: 2.0,
+      s2: 1.5,
+      s3: -1.5,
+      s4: 2.5,
+      s5: 5.0,
+      s6: 2.5,
+      age: 3.5
+    };
+
+    const features = [
+      { key: 'sex', label: 'Sex (0=female,1=male)', min: 0, max: 1, value: 1, step: 1 },
+      { key: 'bp', label: 'Resting Blood Pressure (94 - 200 mmHg)', min: 94, max: 200, value: 105 },
+      { key: 'bmi', label: 'BMI (18 - 45)', min: 18, max: 45, value: 28 },
+      { key: 's1', label: 'S1: Serum Total Cholesterol', min: 100, max: 300, value: 180 },
+      { key: 's2', label: 'S2: Low-Density Lipoproteins', min: 50, max: 200, value: 110 },
+      { key: 's3', label: 'S3: High-Density Lipoproteins', min: 20, max: 80, value: 40 },
+      { key: 's4', label: 'S4: Triglycerides Level', min: 50, max: 300, value: 140 },
+      { key: 's5', label: 'S5: Serum Glucose Level', min: 70, max: 200, value: 100 },
+      { key: 's6', label: 'S6: Diabetes Pedigree', min: 0.0, max: 2.5, value: 0.5 },
+      { key: 'age', label: 'Age (20 - 80)', min: 20, max: 80, value: 50 }
+    ];
+
+    const slidersDiv = document.getElementById("sliders");
+
+    features.forEach(f => {
+      const group = document.createElement("div");
+      group.className = "slider-group";
+
+      const label = document.createElement("label");
+      label.innerText = f.label;
+
+      const range = document.createElement("input");
+      range.type = "range";
+      range.min = f.min;
+      range.max = f.max;
+      range.value = f.value;
+      range.step = f.step || "0.1";
+      range.id = f.key;
+
+      const output = document.createElement("input");
+      output.type = "number";
+      output.min = f.min;
+      output.max = f.max;
+      output.step = f.step || "0.1";
+      output.value = f.value;
+      output.className = "output";
+
+      // When output number changes
+      output.oninput = () => {
+        range.value = output.value;
+        updatePrediction();
+      };
+
+      // When range slider changes
+      range.oninput = () => {
+        output.value = range.value;
+        updatePrediction();
+      };
+
+      group.appendChild(label);
+      group.appendChild(range);
+      group.appendChild(output);
+      slidersDiv.appendChild(group);
+    });
+
+    function sigmoid(z) {
+      return 1 / (1 + Math.exp(-z));
+    }
+
+    function normalize(value, min, max) {
+      return (value - min) / (max - min);
+    }
+
+    function updatePrediction() {
+      let z = -5; // Intercept term
+
+      features.forEach(f => {
+        const val = parseFloat(document.getElementById(f.key).value);
+        const norm = normalize(val, f.min, f.max);
+        z += norm * weights[f.key];
+      });
+
+      const prob = sigmoid(z);
+      const percent = Math.round(prob * 100);
+      const bar = document.getElementById("barFill");
+      bar.style.height = percent + "%";
+      bar.innerText = percent + "%";
+    }
+
+    updatePrediction(); // Initial display
+  </script>
+</body>
+</html>

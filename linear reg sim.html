@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Linear Regression Interactive Simulation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+    }
+    canvas {
+      border: 1px solid #333;
+      margin-top: 10px;
+      background-color: #fff;
+    }
+    #controls {
+      margin: 15px;
+    }
+    #info, #pointList {
+      margin-top: 10px;
+    }
+    button, select {
+      margin: 5px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Linear Regression Interactive Simulation</h1>
+
+  <div id="controls">
+    <button onclick="resetCanvas()">Reset</button>
+    <button onclick="downloadPNG()">Download PNG</button>
+    <button onclick="downloadCSV()">Download CSV</button>
+    Zoom:
+    <select onchange="changeScale(this.value)">
+      <option value="10">10</option>
+      <option value="20" selected>20</option>
+      <option value="50">50</option>
+    </select>
+  </div>
+
+  <canvas id="canvas" width="600" height="600"></canvas>
+
+  <div id="info"><strong>R²: <span id="r2">N/A</span></strong></div>
+  <div id="pointList"><strong>Points:</strong> <span id="points">None</span></div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const r2Span = document.getElementById("r2");
+    const pointsSpan = document.getElementById("points");
+
+    const margin = 50;
+    const canvasSize = canvas.width;
+    let axisMax = 20;
+    let points = [];
+
+    function dataToCanvas(x, y) {
+      const scale = (canvasSize - 2 * margin) / axisMax;
+      return {
+        x: margin + x * scale,
+        y: canvasSize - margin - y * scale
+      };
+    }
+
+    function canvasToData(x, y) {
+      const scale = (canvasSize - 2 * margin) / axisMax;
+      return {
+        x: (x - margin) / scale,
+        y: (canvasSize - y - margin) / scale
+      };
+    }
+
+    canvas.addEventListener("click", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      const data = canvasToData(clickX, clickY);
+      if (data.x >= 0 && data.x <= axisMax && data.y >= 0 && data.y <= axisMax) {
+        points.push(data);
+        draw();
+      }
+    });
+
+    function drawGridAndAxes() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const scale = (canvasSize - 2 * margin) / axisMax;
+
+      ctx.strokeStyle = "#ddd";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= axisMax; i += 2) {
+        const pos = margin + i * scale;
+
+        // Vertical grid
+        ctx.beginPath();
+        ctx.moveTo(pos, margin);
+        ctx.lineTo(pos, canvasSize - margin);
+        ctx.stroke();
+
+        // Horizontal grid
+        ctx.beginPath();
+        ctx.moveTo(margin, pos);
+        ctx.lineTo(canvasSize - margin, pos);
+        ctx.stroke();
+
+        // Axis ticks
+        ctx.fillStyle = "black";
+        ctx.font = "12px Arial";
+        ctx.fillText(i, pos - 6, canvasSize - margin + 15);
+        ctx.fillText(i, margin - 25, canvasSize - pos + 4);
+      }
+
+      // Axes
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+
+      ctx.beginPath(); ctx.moveTo(margin, margin); ctx.lineTo(margin, canvasSize - margin); ctx.stroke(); // Y
+      ctx.beginPath(); ctx.moveTo(margin, canvasSize - margin); ctx.lineTo(canvasSize - margin, canvasSize - margin); ctx.stroke(); // X
+
+      // Labels
+      ctx.fillStyle = "black";
+      ctx.font = "bold 14px Arial";
+      ctx.fillText("Independent Variable", canvasSize / 2 - 60, canvasSize - 10);
+      ctx.save();
+      ctx.translate(15, canvasSize / 2 + 60);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("Dependent Variable", 0, 0);
+      ctx.restore();
+    }
+
+    function drawPoints() {
+      ctx.fillStyle = "blue";
+      for (let pt of points) {
+        const canvasPt = dataToCanvas(pt.x, pt.y);
+        ctx.beginPath();
+        ctx.arc(canvasPt.x, canvasPt.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawVerticalErrorLines(slope, intercept) {
+      ctx.strokeStyle = "green";
+      ctx.lineWidth = 1;
+
+      for (let pt of points) {
+        const predY = slope * pt.x + intercept;
+        const ptCanvas = dataToCanvas(pt.x, pt.y);
+        const predCanvas = dataToCanvas(pt.x, predY);
+
+        ctx.beginPath();
+        ctx.moveTo(ptCanvas.x, ptCanvas.y);
+        ctx.lineTo(predCanvas.x, predCanvas.y);
+        ctx.stroke();
+      }
+    }
+
+    function drawRegressionLine(slope, intercept) {
+      const pt1 = dataToCanvas(0, intercept);
+      const pt2 = dataToCanvas(axisMax, slope * axisMax + intercept);
+
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(pt1.x, pt1.y);
+      ctx.lineTo(pt2.x, pt2.y);
+      ctx.stroke();
+    }
+
+    function calculateRegression(pts) {
+      const n = pts.length;
+      if (n < 2) return null;
+
+      let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+      for (let pt of pts) {
+        sumX += pt.x;
+        sumY += pt.y;
+        sumXY += pt.x * pt.y;
+        sumXX += pt.x * pt.x;
+      }
+
+      const meanX = sumX / n;
+      const meanY = sumY / n;
+
+      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+      const intercept = meanY - slope * meanX;
+
+      let ssTot = 0, ssRes = 0;
+      for (let pt of pts) {
+        const predY = slope * pt.x + intercept;
+        ssTot += (pt.y - meanY) ** 2;
+        ssRes += (pt.y - predY) ** 2;
+      }
+
+      const r2 = 1 - ssRes / ssTot;
+      return { slope, intercept, r2 };
+    }
+
+    function draw() {
+      drawGridAndAxes();
+      drawPoints();
+
+      const result = calculateRegression(points);
+      if (result) {
+        drawRegressionLine(result.slope, result.intercept);
+        drawVerticalErrorLines(result.slope, result.intercept);
+        r2Span.textContent = result.r2.toFixed(4);
+      } else {
+        r2Span.textContent = "N/A";
+      }
+
+      // Update point list
+      if (points.length > 0) {
+        pointsSpan.textContent = points.map(p => `(${p.x.toFixed(2)}, ${p.y.toFixed(2)})`).join(", ");
+      } else {
+        pointsSpan.textContent = "None";
+      }
+    }
+
+    function resetCanvas() {
+      points = [];
+      r2Span.textContent = "N/A";
+      pointsSpan.textContent = "None";
+      draw();
+    }
+
+    function downloadPNG() {
+      const link = document.createElement('a');
+      link.download = 'linear_regression_simulation.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    function downloadCSV() {
+      if (points.length === 0) return;
+      let csvContent = "data:text/csv;charset=utf-8,X,Y\n" +
+        points.map(p => `${p.x.toFixed(4)},${p.y.toFixed(4)}`).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "data_points.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function changeScale(value) {
+      axisMax = parseInt(value);
+      draw();
+    }
+
+    // Initial draw
+    draw();
+  </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Decision Tree - Iris Dataset</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { background-color: white; font-family: Arial, sans-serif; text-align: center; }
+        #treeContainer { display: flex; justify-content: center; align-items: center; height: auto; }
+        svg { border: 1px solid #ccc; background: #f9f9f9; }
+        h2 { margin-top: 20px; }
+        #depthValue { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Decision Tree Visualization - Iris Dataset</h2>
+    <label for="depthSlider">Select Tree Depth (2 to 10): </label>
+    <input type="range" id="depthSlider" min="2" max="10" value="3">
+    <span id="depthValue">3</span>
+    <div id="treeContainer">
+        <svg id="treeSvg" width="1000" height="600"></svg>
+    </div>
+
+    <script>
+        const svg = d3.select("#treeSvg");
+        const width = +svg.attr("width");
+        const height = +svg.attr("height");
+
+        const irisAttributes = [
+            "petal length (cm) ≤ 2.45",
+            "petal width (cm) ≤ 1.75",
+            "petal length (cm) ≤ 4.95",
+            "petal length (cm) ≤ 4.85",
+            "sepal width (cm) ≤ 3.35",
+            "sepal length (cm) ≤ 6.15",
+            "petal width (cm) ≤ 0.8",
+            "petal length (cm) ≤ 5.1",
+            "sepal length (cm) ≤ 5.9"
+        ];
+
+        const classes = ["setosa", "versicolor", "virginica"];
+
+        function generateTree(depth) {
+            const treeData = buildTree(depth);
+            svg.selectAll("*").remove();
+
+            const root = d3.hierarchy(treeData);
+            const treeLayout = d3.tree().size([width - 40, height - 40]);
+            treeLayout(root);
+
+            svg.selectAll('line.link')
+                .data(root.links())
+                .enter()
+                .append('line')
+                .classed('link', true)
+                .attr('x1', d => d.source.x + 20)
+                .attr('y1', d => d.source.y + 20)
+                .attr('x2', d => d.target.x + 20)
+                .attr('y2', d => d.target.y + 20)
+                .attr('stroke', 'black');
+
+            const nodes = svg.selectAll('g.node')
+                .data(root.descendants())
+                .enter()
+                .append('g')
+                .classed('node', true)
+                .attr('transform', d => `translate(${d.x + 20},${d.y + 20})`);
+
+            nodes.append('rect')
+                .attr('x', -75)
+                .attr('y', -45)
+                .attr('width', 150)
+                .attr('height', 90)
+                .attr('fill', '#f0f8ff')
+                .attr('stroke', 'black');
+
+            nodes.append('text')
+                .attr('y', -25)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text(d => d.data.name);
+
+            nodes.append('text')
+                .attr('y', -10)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text(d => `gini = ${d.data.gini}`);
+
+            nodes.append('text')
+                .attr('y', 5)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text(d => `samples = ${d.data.samples}`);
+
+            nodes.append('text')
+                .attr('y', 20)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text(d => `value = [${d.data.value.join(", ")}]`);
+
+            nodes.append('text')
+                .attr('y', 35)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text(d => `class = ${d.data.class}`);
+        }
+
+        function buildTree(depth, level = 1, index = 0) {
+            const attr = irisAttributes[(index) % irisAttributes.length];
+            const gini = (Math.random() * 0.6 + 0.1).toFixed(3);
+            const samples = Math.floor(150 / Math.pow(2, level - 1));
+            const setosa = Math.floor(Math.random() * samples);
+            const versicolor = Math.floor(Math.random() * (samples - setosa));
+            const virginica = samples - setosa - versicolor;
+            const values = [setosa, versicolor, virginica];
+            const maxIndex = values.indexOf(Math.max(...values));
+            const node = {
+                name: attr,
+                gini: gini,
+                samples: samples,
+                value: values,
+                class: classes[maxIndex]
+            };
+            if (level < depth) {
+                node.children = [
+                    buildTree(depth, level + 1, index + 1),
+                    buildTree(depth, level + 1, index + 2)
+                ];
+            }
+            return node;
+        }
+
+        const slider = document.getElementById('depthSlider');
+        const depthVal = document.getElementById('depthValue');
+
+        slider.addEventListener('input', function() {
+            depthVal.textContent = this.value;
+            generateTree(+this.value);
+        });
+
+        generateTree(+slider.value);
+    </script>
+</body>
+</html>

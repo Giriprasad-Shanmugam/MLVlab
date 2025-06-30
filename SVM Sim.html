@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SVM Simulation - Linear and RBF Kernels</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    canvas {
+      border: 1px solid #333;
+      background-color: #fff;
+      cursor: crosshair;
+    }
+    .controls {
+      margin: 15px 0;
+    }
+    label {
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>SVM Simulator - Toggle Linear / RBF Kernel</h2>
+  <div class="controls">
+    <label>Soft Margin (C): <input type="range" id="cSlider" min="0.01" max="10" step="0.01" value="1"></label>
+    <label>Learning Rate: <input type="range" id="lrSlider" min="0.001" max="1" step="0.001" value="0.1"></label>
+    <label>Kernel:
+      <select id="kernelSelect">
+        <option value="linear">Linear</option>
+        <option value="rbf">RBF</option>
+      </select>
+    </label>
+    <button id="resetBtn">Reset</button>
+  </div>
+  <canvas id="canvas" width="600" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const Cslider = document.getElementById('cSlider');
+    const LRslider = document.getElementById('lrSlider');
+    const kernelSelect = document.getElementById('kernelSelect');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let data = [];
+    const width = canvas.width;
+    const height = canvas.height;
+
+    let model = { alphas: [], b: 0, kernel: "linear", C: 1, lr: 0.1 };
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const label = e.shiftKey ? -1 : 1;
+      data.push({ x, y, label });
+      train();
+    });
+
+    Cslider.addEventListener('input', () => {
+      model.C = parseFloat(Cslider.value);
+      train();
+    });
+
+    LRslider.addEventListener('input', () => {
+      model.lr = parseFloat(LRslider.value);
+      train();
+    });
+
+    kernelSelect.addEventListener('change', () => {
+      model.kernel = kernelSelect.value;
+      train();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      data = [];
+      model = { alphas: [], b: 0, kernel: kernelSelect.value, C: parseFloat(Cslider.value), lr: parseFloat(LRslider.value) };
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    function kernelFunc(a, b) {
+      if (model.kernel === 'linear') {
+        return a.x * b.x + a.y * b.y;
+      } else {
+        let sigma = 10000;
+        return Math.exp(-((a.x - b.x) ** 2 + (a.y - b.y) ** 2) / sigma);
+      }
+    }
+
+    function predict(pt) {
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) {
+        sum += model.alphas[i] * data[i].label * kernelFunc(data[i], pt);
+      }
+      return sum + model.b;
+    }
+
+    function train() {
+      model.alphas = new Array(data.length).fill(0);
+      model.b = 0;
+      const epochs = 100;
+
+      for (let epoch = 0; epoch < epochs; epoch++) {
+        for (let i = 0; i < data.length; i++) {
+          let sum = 0;
+          for (let j = 0; j < data.length; j++) {
+            sum += model.alphas[j] * data[j].label * kernelFunc(data[j], data[i]);
+          }
+          let out = sum + model.b;
+          let err = 1 - data[i].label * out;
+          if (err > 0) {
+            model.alphas[i] += model.lr;
+            model.alphas[i] = Math.min(model.C, Math.max(0, model.alphas[i]));
+            model.b += model.lr * data[i].label;
+          }
+        }
+      }
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw decision region
+      const imgData = ctx.createImageData(width, height);
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+          const pred = predict({ x, y });
+          const offset = (y * width + x) * 4;
+          if (pred > 1) {
+            imgData.data[offset] = 255;     // Red
+            imgData.data[offset + 3] = 40;
+          } else if (pred < -1) {
+            imgData.data[offset + 1] = 255; // Green
+            imgData.data[offset + 3] = 40;
+          } else {
+            imgData.data[offset] = 0;
+            imgData.data[offset + 2] = 255; // Blue margin
+            imgData.data[offset + 3] = 40;
+          }
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+
+      // Draw points
+      for (const pt of data) {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = pt.label === 1 ? 'red' : 'green';
+        ctx.fill();
+      }
+
+      // Draw hyperplane and margins for linear only
+      if (model.kernel === 'linear') {
+        let w = [0, 0];
+        for (let i = 0; i < data.length; i++) {
+          w[0] += model.alphas[i] * data[i].label * data[i].x;
+          w[1] += model.alphas[i] * data[i].label * data[i].y;
+        }
+
+        const drawLine = (offset, style) => {
+          const x1 = 0, x2 = width;
+          const y1 = (-w[0] * x1 - model.b + offset) / w[1];
+          const y2 = (-w[0] * x2 - model.b + offset) / w[1];
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = style.color;
+          ctx.setLineDash(style.dash);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        };
+
+        drawLine(0, { color: 'black', dash: [] }); // Hyperplane
+        drawLine(1, { color: 'black', dash: [5, 5] }); // +1 margin
+        drawLine(-1, { color: 'black', dash: [5, 5] }); // -1 margin
+      }
+    }
+
+    train();
+  </script>
+</body>
+</html>

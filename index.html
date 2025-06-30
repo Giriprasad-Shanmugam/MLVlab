@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Virtual Lab</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Times New Roman", Times, serif;
+      display: flex;
+    }
+
+    nav {
+      width: 300px;
+      background: #20232a;
+      color: white;
+      height: 100vh;
+      padding: 20px;
+      position: fixed;
+      overflow-y: auto;
+    }
+
+    nav h2 {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    nav li {
+      padding: 10px;
+      cursor: pointer;
+      color: white;
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+
+    nav li:hover {
+      background: #444;
+    }
+
+    main {
+      margin-left: 320px;
+      padding: 30px;
+      flex-grow: 1;
+    }
+
+    h3 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <h2>List of Experiments</h2>
+    <ul>
+      <li onclick="loadExperiment(1)">1. Linear Regression</li>
+      <li onclick="loadExperiment(2)">2. Logistic Regression</li>
+      <li onclick="loadExperiment(3)">3. SVM</li>
+      <li onclick="loadExperiment(4)">4. K Nearest Neighbour</li>
+      <li onclick="loadExperiment(5)">5. Decision Tree</li>
+      <li onclick="loadExperiment(6)">6. K Means Clustering</li>
+      <li onclick="loadExperiment(7)">7. Random Forest Algorithm</li>
+      <li onclick="loadExperiment(8)">8. AdaBoost Algorithm</li>
+      <li onclick="loadExperiment(9)">9. Hierarchical Clustering</li>
+      <li onclick="loadExperiment(10)">10. Bayes Classifier</li>
+      <li onclick="loadExperiment(11)">11. Convolution Neural Network</li>
+    </ul>
+  </nav>
+
+  <main>
+    <div id="experimentContent">
+      <h2>Welcome to Machine Learning Algorithms Virtual Lab</h2>
+      <p>Please select an experiment from the left menu to view its content.</p>
+    </div>
+  </main>
+
+  <script>
+    const experimentData = {
+      1: {
+        title: "1. Linear Regression",
+        aim: `<ol>
+            <li>To write a python program for linear regression using scikit learn module and diabetes data and predict the disease progression.</li>
+            <li>To write a matlab program for linear regression using diabetes data and predict the disease progression.</li>
+          </ol>`,
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li>Load the diabetes dataset and use only one feature of <strong>BMI</strong> (body mass index)</li>
+            <li>Split the data into training/testing sets</li>
+            <li>Split the targets into training/testing sets</li>
+            <li>Create linear regression object</li>
+            <li>Train the model using the training sets</li>
+            <li>Make predictions using the testing set</li>
+            <li>Print the coefficients and mean squared error</li>
+            <li>
+              Print the coefficient of determination
+              <p><strong>Coefficient of determination:</strong> The coefficient of multiple determination (R²) measures the proportion of variation in the dependent variable that can be predicted from the set of independent variables in a multiple regression equation.</p>
+              <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msup>
+    <mi>R</mi>
+    <mn>2</mn>
+  </msup>
+  <mo>=</mo>
+  <mn>1</mn>
+  <mo>-</mo>
+  <mfrac>
+    <mrow>
+      <mo>&#x2211;</mo>
+      <mo>(</mo>
+      <msub>
+        <mi>y</mi>
+        <mi>i</mi>
+      </msub>
+      <mo>-</mo>
+      <msub>
+        <mover>
+          <mi>y</mi>
+          <mo>^</mo>
+        </mover>
+        <mi>i</mi>
+      </msub>
+      <msup>
+        <mo>)</mo>
+        <mn>2</mn>
+      </msup>
+    </mrow>
+    <mrow>
+      <mo>&#x2211;</mo>
+      <mo>(</mo>
+      <msub>
+        <mi>y</mi>
+        <mi>i</mi>
+      </msub>
+      <mo>-</mo>
+      <mover>
+        <mi>y</mi>
+        <mo>&#x00AF;</mo>
+      </mover>
+      <msup>
+        <mo>)</mo>
+        <mn>2</mn>
+      </msup>
+    </mrow>
+  </mfrac>
+</math>
+</li>
+            <li>Plot outputs: predicted and actual value</li>
+          </ol>
+          <h3>About Diabetes Dataset</h3>
+          <p style="text-align: justify;">
+            Ten baseline variables — age, sex, body mass index, average blood pressure, and six blood serum measurements — were obtained for each of n = 442 diabetes patients, as well as the response of interest: a quantitative measure of disease progression one year after baseline.
+          </p>
+          <p><strong>Data Set Characteristics</strong></p>
+          <ul>
+            <li>Number of Instances: 442</li>
+            <li>Number of Attributes: First 10 columns are numeric predictive values</li>
+            <li>Target: Column 11 is a quantitative measure of disease progression one year after baseline</li>
+          </ul>
+          <p><strong>Attribute Information:</strong></p>
+          <ul>
+            <li>age — age in years</li>
+            <li>sex — gender</li>
+            <li>bmi — body mass index</li>
+            <li>bp — average blood pressure</li>
+            <li>s1 — tc, T-Cells (a type of white blood cells)</li>
+            <li>s2 — ldl, low-density lipoproteins</li>
+            <li>s3 — hdl, high-density lipoproteins</li>
+            <li>s4 — tch, thyroid stimulating hormone</li>
+            <li>s5 — ltg, lamotrigine</li>
+            <li>s6 — glu, blood sugar level</li>
+          </ul>
+          <p><strong>Source URL:</strong> <a href="https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html" target="_blank">https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html</a></p>
+        `,
+
+        simulation: "Plotting regression line and predicting values based on new inputs.",
+        simulationFile: "linear reg sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>Give the linear regression equation and explain its working principle.</li>
+              <li>What is the difference between classification and prediction problems?</li>
+              <li>Can regression be used for classification? Give your comments.</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Make a prediction using <strong>BP</strong> and <strong>blood sugar level</strong> as features.</li>
+              <li>Compare values from the dataset and your model output.</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The linear regression model was successfully implemented using the BMI feature of the diabetes dataset. It predicted disease progression with a coefficient of determination (R²) of __________ and a mean squared error of ___________.</p>`,
+      },
+      2: {
+        title: "2. Logistic Regression",
+        aim: "To write a python program for logistic regression using scikit learn module and diabetes data and to classify the disease progression.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Load the Dataset:</strong> Load the diabetes dataset.</li>
+            <li><strong>Binarize the Target:</strong> Convert the continuous target variable into a binary variable based on the median.</li>
+            <li><strong>Split the Dataset:</strong> Split the dataset into training and testing sets..</li>
+            <li><strong>Standardize Features:</strong> Standardize the feature values.</li>
+            <li><strong>Fit the Model:</strong> Initialize and fit the logistic regression model.</li>
+            <li><strong>Predict Labels:</strong> Predict the labels for the test set.</li>
+	    <li><strong>Generate Report:</strong> Generate the classification report using ‘classification_report’.</li>
+            <li><strong>Confusion Matrix:</strong> Generate and display the confusion matrix using ‘confusion_matrix.</li>
+          </ol>
+          <h3>About Diabetes Dataset</h3>
+          <p>
+            Ten baseline variables — age, sex, body mass index, average blood pressure, and six blood serum measurements — were obtained for each of n = 442 diabetes patients, as well as the response of interest: a quantitative measure of disease progression one year after baseline.
+          </p>
+          <p><strong>Data Set Characteristics</strong></p>
+          <ul>
+            <li>Number of Instances: 442</li>
+            <li>Number of Attributes: First 10 columns are numeric predictive values</li>
+            <li>Target: Column 11 is a quantitative measure of disease progression one year after baseline</li>
+          </ul>
+          <p><strong>Attribute Information:</strong></p>
+          <ul>
+            <li>age — age in years</li>
+            <li>sex — gender</li>
+            <li>bmi — body mass index</li>
+            <li>bp — average blood pressure</li>
+            <li>s1 — tc, T-Cells (a type of white blood cells)</li>
+            <li>s2 — ldl, low-density lipoproteins</li>
+            <li>s3 — hdl, high-density lipoproteins</li>
+            <li>s4 — tch, thyroid stimulating hormone</li>
+            <li>s5 — ltg, lamotrigine</li>
+            <li>s6 — glu, blood sugar level</li>
+          </ul>
+          <p><strong>Source URL:</strong> <a href="https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html" target="_blank">https://www4.stat.ncsu.edu/~boos/var.select/diabetes.html</a></p>
+        `,
+
+        simulation: "Predicting disease progression as a binary classification.",
+        simulationFile: "Logistic regression.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>Define logistic regression and where it's used.</li>
+              <li>Difference between logistic and linear regression?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>What is a confusion matrix and what does it represent?</li>
+              <li>Explain any one performance metric used in classification.</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The logistic regression model was successfully implemented using the diabetes dataset with a binarized target. It achieved an accuracy of____________%, and the classification report and confusion matrix confirmed effective binary classification performance.</p>`,
+      },
+      3: {
+        title: "3. SVM",
+        aim: "To write a python program for Support Vector Machines classifier   using scikit learn module and Social Network Ads data set to classify whether a customer purchase SUV car or not..",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li>Load the Social_Network_Ads.csv dataset using pandas and use only age, estimated salary features as input x data.</li>
+            <li>Take purchased data Colum as y (target variable).</li>
+            <li>Split the data into training/testing sets(25% test set,75% as training set)</li>
+            <li>Perform Feature Scaling for training and test data.</li>
+            <li>Create SVM classifier object with linear kernel.</li>
+            <li>Train the model using the training sets.</li>
+	    <li>Make predictions using the testing set.</li>
+            <li>Print the Confusion Matrix.</li>
+	    <li>Plot SVM classifier plot with classifier boundary.</li>
+          </ol>
+          <h3>About Social Network Ads Dataset</h3>
+          <p>
+            Number of features: 5 (ID, gender, age, estimated salary, purchased (target variable to be predicted))\nNumber of samples: 400
+          </p>
+          <p><strong>Dataset Link:</strong> <a href="https://www.kaggle.com/rakeshrau/social-network-ads?select=Social_Network_Ads.csv" target="_blank">https://www.kaggle.com/rakeshrau/social-network-ads?select=Social_Network_Ads.csv</a></p>
+        `,
+
+        simulation: "Visualizing Linear & Non-linear SVM Decision Boundaries.",
+        simulationFile: "SVM Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>Why Standard Scaling of feature is essential for data? Give the formula to do standard scaling?.</li>
+              <li>What is the use of the panda’s library? Explain any four inbuilt functions in pandas library </li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Calculate accuracy, precision and recall for linear kernel SVM from confusions matrix</li>
+              <li>Run the code for Polynomial Kernel, Gaussian Kernel, Sigmoid Kernel, give performance measures (accuracy, precision and recall) for them and find which kernel performs best .</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The SVM classifier with a linear kernel was successfully implemented on the Social Network Ads dataset. It accurately classified customer purchasing behavior, and the confusion matrix along with the decision boundary plot confirmed the model’s effective performance.</p>`,
+      },
+      4: {
+        title: "4. K Nearest Neighbors Classifier",
+        aim: "To write a Python program that implements and visualizes the decision boundaries of a K-Nearest Neighbors (KNN) classifier on the Iris dataset, utilizing different weighting strategies for the nearest neighbors.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Load the Dataset:</strong> Load the Iris dataset using load_iris.</li>
+            <li><strong>Binarize the Target:</strong> Extract "sepal length" and "sepal width" as the feature set X, and the target labels as y.</li>
+            <li><strong>Select Features and Labels:</strong> Split the dataset into training and testing sets..</li>
+            <li><strong>Split the Dataset:</strong> Split the dataset into training and testing sets using train_test_split, ensuring class distribution is maintained with stratify=y.</li>
+            <li><strong>Create a Pipeline</strong> Create a pipeline with StandardScaler for feature scaling and KNeighborsClassifier for the KNN model.</li>
+            <li><strong>Initialize Plot:</strong> Create a figure with two subplots to visualize the KNN decision boundaries with different weight strategies.</li>
+	    <li><strong>Iterate Over Weight Strategies:</strong> For each subplot, set the KNN weight strategy (uniform or distance) and fit the model to the training data.</li>
+            <li><strong>Visualize Decision Boundaries:</strong> Plot the decision boundary</li>
+          </ol>
+          <h3>About Iris Dataset</h3>
+          <p style="text-align: justify;">
+            The data sets consists of 3 different types of irises’ (Setosa, Versicolour, and Virginica) petal and sepal length, stored in a 150x4 numpy.ndarray. The rows being the samples and the columns being: Sepal Length, Sepal Width, Petal Length and Petal Width.
+          </p>
+	  <h3>Iris Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Number of Instances</th>
+              <td>: 150 (50 in each of three classes)</td>
+            </tr>
+            <tr>
+             <th>Number of Attributes</th>
+             <td>: 4 numeric, predictive attributes and the class</td>
+           </tr>
+      	   <tr>
+            <th>Attribute Information</th>
+            <td><li>sepal length in cm</li>
+            	<li>sepal width in cm</li>
+            	<li>petal length in cm</li>
+            	<li>petal width in cm</li>
+			</td>
+          </tr>
+          <tr>
+            <th>Classes</th>
+            <td>: 3 (Iris-Setosa, Iris-Versicolour, Iris-Virginica)</td>
+          </tr>
+    	  </table>
+
+           `,
+	    simulation: "Interactive Visualization of KNN Classification on Iris Dataset.",
+        simulationFile: "KNN Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>How does the choice of 'k' (the number of neighbors) affect the performance of the KNN classifier?</li>
+              <li>Why is it important to standardize features before applying KNN?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>How does varying the value of 'k' influence the accuracy of your KNN model? If you were to repeat the experiment, would you opt for a different 'k' value?</li>
+              <li>Develop a program that compares the performance of a KNN model with and without feature scaling. Present the accuracy results side by side and discuss the impact of feature scaling on the model's performance.</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The K-Nearest Neighbors classifier was successfully implemented and visualized on the Iris dataset using both uniform and distance-based weighting. The decision boundary plots clearly illustrated how different weight strategies influence classification regions and accuracy.</p>`,
+      },
+      5: {
+        title: "5. Decision Trees- Classifier",
+        aim: "To write a python program for decision tree classifier   using scikit learn module to classify   Iris flower data set",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Load the Dataset:</strong> Load the Iris dataset using load_iris.</li>
+            <li><strong>Binarize the Target:</strong> Extract "sepal length" and "sepal width" as the feature set X, and the target labels as y.</li>
+            <li><strong>Select Features and Labels:</strong> Split the dataset into training and testing sets..</li>
+            <li><strong>Split the Dataset:</strong> Split the dataset into training and testing sets using train_test_split, ensuring class distribution is maintained with stratify=y.</li>
+            <li><strong>Create a Pipeline</strong> Create a pipeline with StandardScaler for feature scaling and KNeighborsClassifier for the KNN model.</li>
+            <li><strong>Initialize Plot:</strong> Create a figure with two subplots to visualize the KNN decision boundaries with different weight strategies.</li>
+	    <li><strong>Iterate Over Weight Strategies:</strong> For each subplot, set the KNN weight strategy (uniform or distance) and fit the model to the training data.</li>
+            <li><strong>Visualize Decision Boundaries:</strong> Plot the decision boundary</li>
+          </ol>
+          <h3>About Iris Dataset</h3>
+          <p style="text-align: justify;">
+            The data sets consists of 3 different types of irises’ (Setosa, Versicolour, and Virginica) petal and sepal length, stored in a 150x4 numpy.ndarray. The rows being the samples and the columns being: Sepal Length, Sepal Width, Petal Length and Petal Width.
+          </p>
+	  <h3>Iris Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Number of Instances</th>
+              <td>: 150 (50 in each of three classes)</td>
+            </tr>
+            <tr>
+             <th>Number of Attributes</th>
+             <td>: 4 numeric, predictive attributes and the class</td>
+           </tr>
+      	   <tr>
+            <th>Attribute Information</th>
+            <td><li>sepal length in cm</li>
+            	<li>sepal width in cm</li>
+            	<li>petal length in cm</li>
+            	<li>petal width in cm</li>
+			</td>
+          </tr>
+          <tr>
+            <th>Classes</th>
+            <td>: 3 (Iris-Setosa, Iris-Versicolour, Iris-Virginica)</td>
+          </tr>
+    	  </table>
+          <p><strong>Dataset Link:</strong> <a href="http://archive.ics.uci.edu/ml/datasets/Iris/" target="_blank">http://archive.ics.uci.edu/ml/datasets/Iris/</a></p>
+           `,
+        simulation: "Simulation of Decision Tree Classifier on Iris Dataset.",
+        simulationFile: "Decission Tree Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>Why decision tree is prepared to use with an ensemble approach?</li>
+              <li>What is Information Gain? How it is related to decision tree?</li>
+			  <li>What is Gini index? How it is related to decision tree?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Apply standard scaling to the data set and give your observation/comments on the performance.</li>
+              <li>Run the code for the wine dataset from scikit learn module and presents the results.</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The decision tree classifier was successfully implemented on the Iris dataset. The model achieved high accuracy, and the resulting tree structure and confusion matrix clearly demonstrated effective classification across all three iris flower species.</p>`,
+      },
+      6: {
+        title: "6. K-Means Clustering",
+        aim: "To write a python program for make blob dataset and cluster them by K Means Clustering using scikit learn module",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Import Libraries: </strong> Import necessary libraries, including matplotlib and scikit-learn.</li>
+            <li><strong>Generate Synthetic Data:</strong> Create synthetic data using a function like make_blobs from scikit-learn, specifying parameters such as the number of samples, features, centers, cluster standard deviation, shuffle, and random state.</li>
+            <li><strong>Visualize Data:</strong> Plot the synthetic data points using matplotlib to visualize the dataset.</li>
+            <li><strong>Initialize KMeans:</strong>Create an instance of the KMeans algorithm, specifying parameters such as the number of clusters, initialization method, number of initializations, maximum iterations, tolerance, and random state.</li>
+            <li><strong>Fit and Predict:</strong>Use the fit_predict method of KMeans to fit the model to the data and predict cluster labels for each data point.</li>
+            <li><strong>Visualize Clusters:</strong>Plot the data points for each cluster separately, coloring them differently for better visualization. Also, plot the centroids of each cluster.</li>
+	        <li><strong>Display Plot:</strong>Show the plot with the data points, cluster points, and centroids using matplotlib. .</li>
+          </ol>
+          <h3>About the Dataset</h3>
+          <p style="text-align: justify;">
+            To create blobs of points with a Gaussian distribution, use the make blobs () method. You may specify the number of blobs and samples to be generated, as well as a variety of other parameters. Since the blobs are linearly separable, the problem lends itself to linear classification problems. As a multi-class classification prediction problem, the example below generates a 2D dataset of samples with three blobs. Each observation has two inputs and a class value of 0, 1, or 2. Running the example produces the problem's inputs and outputs, as well as a convenient 2D plot with points for the various groups colored differently.
+Due to the stochastic design of the problem generator, your particular dataset and resulting plot can differ. This isn't a flaw; it's a feature. The make moons () function generates a swirl pattern or two moons for binary classification. You can adjust the amount of noise in the moon shapes as well as the number of samples produced. This challenge is fitting for algorithms that can learn nonlinear class boundaries.
+With the make circles () function, you can create a binary classification problem with datasets that are arranged in concentric circles. You can regulate the amount of noise in the shapes, just as you can with the moons test issue. This is a strong test problem for algorithms that can learn non-linear complex manifolds.
+          </p>
+	  <h3>Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Number of Samples</th>
+              <td>: 100 </td>
+            </tr>
+            <tr>
+             <th>Number of Features</th>
+             <td>: 2 </td>
+           </tr>
+      	   <tr>
+            <th>Cluster Standard Deviation</th>
+            <td>: 1 </td>
+          </tr>
+          <tr>
+            <th>Cluster Bounding Box</th>
+            <td>: -10 to 10</td>
+          </tr>
+    	  </table>
+          <p><strong>Dataset Link:</strong> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html" target="_blank">https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html</a></p>
+           `,
+		   
+        simulation: "Interactive Simulation of K-Means Clustering Algorithm.",
+        simulationFile: "kmeans_visualization.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>In the sense of the K-means algorithm, what is the concept of clusters and centroids?</li>
+              <li>What are the meanings of the K means input arguments?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Modify the code for make moons dataset and display the classification plot? Give explanation about the performance improvement or degradation using new dataset?</li>
+              <li>Is K-means clustering applicable to non-uniform cluster sample sizes? Provide code examples</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The K-Means clustering algorithm was successfully applied to a synthetic dataset generated using make_blobs. The model effectively grouped the data into three clusters, and the centroids were clearly visualized, confirming correct cluster formation.</p>`,
+      },
+      7: {
+        title: "7. Random Forest Classifier",
+        aim: "To develop a python program and evaluate a machine learning model using the Random Forest classifier to predict heart disease based on the given dataset.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Import Libraries: </strong> Import necessary libraries for data manipulation, visualization, and machine learning.</li>
+            <li><strong>Upload Dataset:</strong> Upload the heart disease dataset from the local machine.</li>
+            <li><strong>Load Dataset:</strong>Load the dataset into a pandas DataFrame.</li>
+            <li><strong>Explore Dataset:</strong>Display the first few rows to understand the data structure.</li>
+            <li><strong>Prepare Variables:</strong>Separate the dataset into feature variables X and target variable y.</li>
+            <li><strong>Split Dataset:</strong>Split the data into training and testing sets using train_test_split().</li>
+	        <li><strong>Check Shapes:</strong>Print the shapes of training and testing sets for verification.</li>
+			<li><strong>Import Classifier:</strong>Import RandomForestClassifier from sklearn.ensemble.</li>
+			<li><strong>Train Model:</strong>Initialize and train the Random Forest classifier on the training data.</li>
+			<li><strong>Make Predictions:</strong>Predict the target variable on the test set.</li>
+			<li><strong>Evaluate Model:</strong>Assess the model's performance using accuracy and classification report.</li>
+			<li><strong>Display Results:</strong>Print the accuracy and classification report of the model.</li>
+          </ol>
+          <h3>About the Dataset</h3>
+          <p style="text-align: justify;">
+            The dataset available at this Kaggle link is designed for predicting heart disease. It contains medical data related to various attributes that could potentially indicate the presence of heart disease in patients.
+          </p>
+	  <h3>Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Number of Samples</th>
+              <td> 200 </td>
+            </tr>
+            <tr>
+             <th>Number of Features</th>
+             <td> 4 (age, sex, BP, Cholestrol) </td>
+           </tr>
+      	   <tr>
+            <th>Target variable</th>
+            <td>heart disease </td>
+          </tr>
+         </table>
+          <p><strong>Dataset Link:</strong> <a href="https://www.kaggle.com/datasets/gauravduttakiit/heart-disease-prediction" target="_blank">https://www.kaggle.com/datasets/gauravduttakiit/heart-disease-prediction</a></p>
+           `,
+		   
+        simulation: "Visual Simulation of Random Forest on Wine Dataset.",
+        simulationFile: "Randomforest sim1.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>How does a Random Forest classifier work? Why might it be preferred over a single decision tree?</li>
+              <li>Why is it important to understand which features contribute most to the prediction in a Random Forest model? How can feature importance be calculated?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Examine the importance of each feature in the Random Forest model. Which features seem to have the most impact on predicting heart disease.</li>
+              <li>Compare the performance of the Random Forest model with another classification algorithm (e.g., Logistic Regression or SVM) on the same dataset. Which model performs better, and why do you think that is?</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The Random Forest Classifier was successfully implemented to predict heart disease using the given dataset. The model achieved high accuracy, and the classification report confirmed its effectiveness in classifying patients based on medical attributes.</p>`,
+        },
+	  8: { title: "8. AdaBoost Classifier",
+        aim: "To implement the AdaBoost classification algorithm on the Iris dataset, evaluate the model’s performance by measuring accuracy, and generate a detailed classification report, providing insights into precision, recall, and F1-score for multi-class classification.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Load the Dataset:</strong> Load the Iris dataset using load_iris.</li>
+            <li><strong>Binarize the Target:</strong> Extract "sepal length" and "sepal width" as the feature set X, and the target labels as y.</li>
+            <li><strong>Select Features and Labels:</strong> Split the dataset into training and testing sets..</li>
+            <li><strong>Split the Dataset:</strong> Split the dataset into training and testing sets using train_test_split, ensuring class distribution is maintained with stratify=y.</li>
+            <li><strong>Create a Pipeline</strong> Create a pipeline with StandardScaler for feature scaling and KNeighborsClassifier for the KNN model.</li>
+            <li><strong>Initialize Plot:</strong> Create a figure with two subplots to visualize the KNN decision boundaries with different weight strategies.</li>
+	    <li><strong>Iterate Over Weight Strategies:</strong> For each subplot, set the KNN weight strategy (uniform or distance) and fit the model to the training data.</li>
+            <li><strong>Visualize Decision Boundaries:</strong> Plot the decision boundary</li>
+          </ol>
+          <h3>About Iris Dataset</h3>
+          <p style="text-align: justify;">The famous Iris database, first used by Sir R.A. Fisher. The dataset is taken from Fisher’s paper. Note that it’s the same as in R, but not as in the UCI Machine Learning Repository, which has two wrong data points.
+          </p>
+		  <p style="text-align: justify;">This is perhaps the best known database to be found in the pattern recognition literature. Fisher’s paper is a classic in the field and is referenced frequently to this day. (See Duda & Hart, for example.) The data set contains 3 classes of 50 instances each, where each class refers to a type of iris plant. One class is linearly separable from the other 2; the latter are NOT linearly separable from each other:
+          </p>
+	  <h3>Iris Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Classes</th>
+              <td> 3</td>
+            </tr>
+			<tr>
+              <th>Number of Instances</th>
+              <td>150 (50 in each of three classes)</td>
+            </tr>
+            <tr>
+             <th>Number of Attributes</th>
+             <td>4 numeric, predictive attributes and the class</td>
+           </tr>
+      	   <tr>
+            <th>Attribute Information</th>
+            <td><li>sepal length in cm</li>
+            	<li>sepal width in cm</li>
+            	<li>petal length in cm</li>
+            	<li>petal width in cm</li>
+			</td>
+          </tr>
+          <tr>
+            <th>Class Label</th>
+            <td><li>Iris-Setosa</li>
+            	<li>Iris-Versicolour</li>
+            	<li>Iris-Virginica</li>
+			</td>
+          </tr>
+		  <tr>
+              <th>Samples per class </th>
+              <td> 50</td>
+            </tr>
+			<tr>
+              <th>Samples total </th>
+              <td> 150</td>
+            </tr>
+			<tr>
+              <th>Dimensionality </th>
+              <td> 4</td>
+            </tr>
+			<tr>
+              <th>Features  </th>
+              <td> Real, positive</td>
+            </tr>
+    	  </table>
+          <p><strong>Dataset Link:</strong> <a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-dataset" target="_blank">https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-dataset </a></p>
+           `,
+        simulation: "Simulation of Adaboost Classifier on Iris Dataset.",
+        simulationFile: "Adaboost Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>What is AdaBoost?</li>
+              <li>Why do we use ensemble learning techniques like AdaBoost?</li>
+			  <li>What are the important hyperparameters in AdaBoost?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Examine how does the performance of AdaBoost change when using Support Vector Classifier (SVC) as the base learner instead of the default Decision Tree?</li>
+              <li>What impact did changing the n_estimators value have on the model's accuracy? </li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The AdaBoost classifier was successfully implemented and trained on the Iris dataset. The model achieved an accuracy of ___% and demonstrated good performance across all classes, as reflected in the precision, recall, and F1-score values in the classification report.</p>`,
+      },
+	  9: { title: "9. Hierarchical Clustering",
+        aim: "To implement hierarchical clustering on the Iris dataset using the Agglomerative Clustering algorithm, visualize the resulting clusters through a dendrogram, and analyze the hierarchical structure to understand how different clusters are formed based on sample features.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Import Required Libraries:</strong> Import the necessary libraries for hierarchical clustering and data visualization, such as NumPy for data handling, Matplotlib for plotting, and clustering methods from Scikit-learn and SciPy.</li>
+            <li><strong>Load the Iris Dataset:</strong> Load and prepare the dataset for clustering, ensuring it is formatted for input into the clustering algorithm.</li>
+            <li><strong>Model Initialization:</strong> Define the hierarchical clustering model, setting parameters for the linkage criteria, distance threshold, and cluster initialization. The number of clusters may remain undefined for agglomerative clustering.</li>
+            <li><strong>Model Fitting:</strong> Train the model using the input features to build a hierarchical structure based on distance metrics between data points.</li>
+            <li><strong>Calculate Linkage Matrix:</strong> For each merging of clusters, compute the linkage matrix, which tracks the hierarchy and distances between clusters.</li>
+            <li><strong>Plot Dendrogram:</strong> Use the dendrogram plotting function to visualize the hierarchical structure of the data, with adjustable truncation levels for better readability.</li>
+	    <li><strong>Analysis and Interpretation:</strong> Analyze the dendrogram to identify meaningful clusters and draw insights from the structure and relationships between clusters.</li>
+            <li><strong>Visualize Decision Boundaries:</strong> Plot the decision boundary</li>
+          </ol>
+          <h3>About Iris Dataset</h3>
+          <p style="text-align: justify;">The famous Iris database, first used by Sir R.A. Fisher. The dataset is taken from Fisher’s paper. Note that it’s the same as in R, but not as in the UCI Machine Learning Repository, which has two wrong data points.</p>
+	  <p style="text-align: justify;">This is perhaps the best known database to be found in the pattern recognition literature. Fisher’s paper is a classic in the field and is referenced frequently to this day. (See Duda & Hart, for example.) The data set contains 3 classes of 50 instances each, where each class refers to a type of iris plant. One class is linearly separable from the other 2; the latter are NOT linearly separable from each other:
+          </p>
+	  <h3>Iris Dataset Information</h3>
+          <table border="1" cellspacing="0" cellpadding="8">
+      	    <tr>
+              <th>Classes</th>
+              <td> 3</td>
+            </tr>
+			<tr>
+              <th>Number of Instances</th>
+              <td>150 (50 in each of three classes)</td>
+            </tr>
+            <tr>
+             <th>Number of Attributes</th>
+             <td>4 numeric, predictive attributes and the class</td>
+           </tr>
+      	   <tr>
+            <th>Attribute Information</th>
+            <td><li>sepal length in cm</li>
+            	<li>sepal width in cm</li>
+            	<li>petal length in cm</li>
+            	<li>petal width in cm</li>
+			</td>
+          </tr>
+          <tr>
+            <th>Class Label</th>
+            <td><li>Iris-Setosa</li>
+            	<li>Iris-Versicolour</li>
+            	<li>Iris-Virginica</li>
+			</td>
+          </tr>
+		  <tr>
+              <th>Samples per class </th>
+              <td> 50</td>
+            </tr>
+			<tr>
+              <th>Samples total </th>
+              <td> 150</td>
+            </tr>
+			<tr>
+              <th>Dimensionality </th>
+              <td> 4</td>
+            </tr>
+			<tr>
+              <th>Features  </th>
+              <td> Real, positive</td>
+            </tr>
+    	  </table>
+          <p><strong>Dataset Link:</strong> <a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-dataset" target="_blank">https://scikit-learn.org/stable/datasets/toy_dataset.html#iris-dataset </a></p>
+           `,
+        simulation: "Hierarchical Clustering Simulation on Iris Dataset.",
+        simulationFile: "Hierarcchical Clustering Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>What is Hierarchical Clustering?</li>
+              <li>Discuss the different types of linkage methods (single, complete, average). How do they affect the clustering process?</li>
+	      <li>Describe the role of distance metrics (Euclidean, Manhattan) in clustering algorithms. How do they impact the formation of clusters?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Test the model with different linkage methods (e.g., single, complete, average). How do these changes affect the hierarchical structure and cluster formation?</li>
+              <li>Try using different distance metrics in the hierarchical clustering model. How does the choice of distance metric impact the clusters and dendrogram? </li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The Hierarchical Clustering model using the Agglomerative Clustering algorithm was successfully implemented on the Iris dataset. The dendrogram effectively visualized the hierarchical relationships among the samples. It revealed a clear structure with natural divisions aligning well with the known species (Setosa, Versicolour, Virginica). By analyzing the dendrogram, the number of optimal clusters and their relationships were identified, validating the effectiveness of hierarchical clustering in unsupervised learning tasks.</p>`,
+        },
+	  10: { title: "10. Bayes Classifier",
+        aim: "To write a python program for Bayes Classifier using sklearn library.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Import necessary libraries:</strong> Import required libraries for numerical computation and file handling.</li>
+            <li><strong>Upload and load dataset:</strong> Upload the dataset file and load it into the notebook environment.</li>
+            <li><strong>Define function to prepare person dataset:</strong> Define a function to read and preprocess the dataset.</li>
+            <li><strong>Upload and prepare training dataset:</strong> Upload the training dataset file and prepare it using the defined function.</li>
+            <li><strong>Upload and prepare test dataset:</strong> Upload the test dataset file and prepare it using the defined function.</li>
+            <li><strong>Gaussian Naive Bayes model initialization:</strong> Initialize the Gaussian Naive Bayes model.</li>
+	    <li><strong>Prepare features and labels for training:</strong> Separate features and labels from the training dataset.</li>
+            <li><strong>Train the model:</strong> Train the Naive Bayes model using the training data.</li>
+	    <li><strong>Prepare features and labels for testing:</strong>Separate features and labels from the test dataset.</li>
+            <li><strong>Make predictions:</strong>Use the trained model to make predictions on the test data.</li>
+            <li><strong>Evaluate model performance:</strong> Calculate and print classification report and confusion matrix to evaluate the model's performance.</li>
+          </ol>
+          
+           `,
+        simulation: "Bayesian Classification Model for Person Identification.",
+        simulationFile: "Bayes Classifier Sim.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>What is advantage of Gaussian Bayes Classifier over normal Bayes Classifier?</li>
+              <li>What does the input arguments to Gaussian NB signify?  </li>
+	    </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Modify the code for Bernoullis naïve bayes and display the output? Give  explanation about the algorithm performance?</li>
+              <li>Using code examples, explain how the output of the Bayes classifier changes as the amount of training data increases or decreases</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The Gaussian Naive Bayes classifier was successfully implemented and evaluated on person height and weight data. The model achieved satisfactory performance, as shown by the classification report and confusion matrix.</p>`,
+        },
+		11: { title: "11. Convolutional Neural Network",
+        aim: "To write a Python program for CNN using Keras with TensorFlow backend.",
+        theory: `<h3>Algorithm</h3>
+          <ol>
+            <li><strong>Import Libraries and Modules:</strong>Import necessary libraries and modules from Keras, including layers for building the neural network, and from sklearn for data handling.</li>
+            <li><strong>Set Configuration:</strong> Define hyperparameters such as batch size, number of epochs, and number of classes.</li>
+            <li><strong>Load and Inspect Data:</strong>Load the Fashion MNIST dataset and inspect its shape to understand the dimensions of training and testing data.</li>
+            <li><strong>Preprocess Data:</strong>
+			<ul>
+			<li>Reshape image data to add a channel dimension, making it suitable for convolutional layers.</li>
+			<li>Convert pixel values to float type and normalize them to the range 0-1.</li>
+			<li>Convert labels from categorical integers to one-hot encoded vectors.</li>
+			</ul></li>
+            <li><strong>Split Training Data:</strong>Split the training data into training and validation sets using sklearn's train_test_split.</li>
+            <li><strong>Build CNN Model:</strong><ul>
+			<li>Initialize a sequential model.</li>
+			<li>Add convolutional layers with specified filters, kernel size, activation function, and padding.</li>
+			<li>Include LeakyReLU activation functions for non-linearity, and max pooling layers for downsampling.</li>
+			<li>Flatten the output to make it suitable for the dense layer.</li>
+			<li>Add fully connected layers with specified neurons and activation functions for classification.</li>
+			</ul></li>
+	        <li><strong>Compile the Model:</strong>Configure the learning process by specifying the optimizer, loss function, and metrics for evaluation.</li>
+			<li><strong>Model Summary:</strong>Display the structure of the model, showing all layers along with their shapes and number of parameters.</li>
+			<li><strong>Train the Model:</strong>Fit the model on the training data with specified batch size and epochs, validating it on a separate set of data.</li>
+			<li><strong>Evaluate the Model:</strong>Test the model on unseen test data to evaluate its performance and print out the loss and accuracy metrics.</li>
+			<li><strong>Print Model Outputs:</strong>Output key results including test loss and accuracy to understand how well the model performed.</li>
+		  </ol>
+          <h3>About the Dataset</h3>
+          <p style="text-align: justify;">
+            The Fashion-MNIST dataset contains 28x28 grayscale images of 70,000 fashion items from ten categories, with 7,000 images per category, from Zalando's article images. The training set contains 60,000 pictures, while the test set contains 10,000. Fashion-MNIST is a dataset that is identical to the MNIST dataset, which you might already be familiar with and use to identify handwritten digits. That is, the image measurements, preparation, and test splits are all identical to those found in the MNIST dataset..
+          </p>
+	        `,
+		   
+        simulation: "Image Classification using CNN on Handwritten Digits.",
+        simulationFile: "CNN.html",
+        prelab: `<h3>Pre Lab Questions</h3>
+            <ol>
+              <li>What are the functions of different components of CNN used in the program?</li>
+              <li>What is need for reshaping the training and testing data?</li>
+            </ol>`,
+        postlab: `<h3>Post Lab Questions</h3>
+            <ol>
+              <li>Modify the code of the CNN for a different dataset and comment on the results?</li>
+              <li>Using code examples, explain how the output of the CNN classifier changes as the amount of training data increases or decreases.</li>
+			  <li>3.	To check the output of the provided code, expand the dataset subroutine to include more training data and also decrease the training data?</li>
+            </ol>`,
+        result: `<h3>Result</h3><p style="text-align: justify;">The CNN model was successfully implemented and trained on the Fashion-MNIST dataset using Keras. It achieved a test accuracy of ________% with a test loss of _________.</p>`,}
+    };
+
+    function loadExperiment(id) {
+      const exp = experimentData[id];
+      const container = document.getElementById('experimentContent');
+      container.innerHTML = `
+        <h2 style="text-align:center;">${exp.title}</h2>
+        <h3>Aim</h3>
+        ${exp.aim}
+        ${exp.theory}
+        <h3>Simulation</h3>
+        <p>${exp.simulation}</p>
+        <button onclick="window.open('${exp.simulationFile}', '_blank')">Open Simulation</button>
+        ${exp.prelab || ""}
+        ${exp.postlab || ""}
+        ${exp.result || ""}
+        ${exp.quiz || ""}
+      `;
+    }
+  </script>
+</body>
+</html>

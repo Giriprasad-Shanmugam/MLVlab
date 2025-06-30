@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KNN Visualization – d3ML</title>
+  <style>
+    body {
+      background: #444;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    #knn {
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .controls {
+      margin: 15px 0;
+    }
+    .controls label {
+      margin: 0 10px;
+    }
+    input[type=range] {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <h1>K-Nearest Neighbors (KNN) Simulation</h1>
+  <div class="controls">
+    <label>k: <input type="range" id="kSlider" min="1" max="20" value="3"></label>
+    <span id="kValue">3</span>
+    <label><input type="checkbox" id="weighted"> Weighted</label>
+  </div>
+  <div id="knn"></div>
+
+  <!-- d3ML library -->
+  <script src="https://cdn.jsdelivr.net/gh/StefanieStoppel/d3ML/lib/d3ml.min.js"></script>
+  <script>
+    const width = 600;
+    const height = 400;
+
+    // generate initial random dataset
+    const types = ['A', 'B'];
+    function rndCluster(type, cx, cy) {
+      return { x: cx + (Math.random()-0.5)*200, y: cy + (Math.random()-0.5)*200, type };
+    }
+    const data = [];
+    for (let i = 0; i < 50; i++) {
+      data.push(rndCluster('A', width*0.3, height*0.5));
+      data.push(rndCluster('B', width*0.7, height*0.5));
+    }
+
+    const options = {
+      rootNode: '#knn',
+      width,
+      height,
+      padding: 40,
+      backgroundColor: '#ffff',
+      circleRadius: 5,
+      circleFill: '#4444',
+      circleStroke: '#0000'
+    };
+
+    let k = parseInt(document.getElementById('kSlider').value);
+    let weighted = document.getElementById('weighted').checked;
+
+    let vis = new d3ml.KNNVisualization(data, options, types, k, weighted);
+    vis.draw();
+
+    document.getElementById('kSlider').addEventListener('input', e => {
+      k = +e.target.value;
+      document.getElementById('kValue').textContent = k;
+      vis.update({ k });
+    });
+
+    document.getElementById('weighted').addEventListener('change', e => {
+      weighted = e.target.checked;
+      vis.update({ weighted });
+    });
+  </script>
+</body>
+</html>
